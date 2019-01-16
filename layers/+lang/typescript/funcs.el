@@ -120,6 +120,13 @@
                 (delete-file tmpfile)))))
     (error "tsfmt not found. Run \"npm install -g typescript-formatter\"")))
 
+(defun spacemacs/typescript-tslint-fix-file ()
+  "Format buffer with tslint."
+	(interactive)
+	(save-buffer)
+  (shell-command (concat "tslint --fix " (buffer-file-name)))
+  (revert-buffer t t))
+
 (defun spacemacs/typescript-format ()
   "Call formatting tool specified in `typescript-fmt-tool'."
   (interactive)
@@ -130,8 +137,10 @@
     (call-interactively 'tide-format))
    ((eq typescript-fmt-tool 'prettier)
     (call-interactively 'prettier-js))
+		((eq typescript-fmt-tool 'tslint)
+			(call-interactively 'spacemacs/typescript-tslint-fix-file))
    (t (error (concat "%s isn't valid typescript-fmt-tool value."
-                     " It should be 'tide, 'typescript-formatter or 'prettier."
+                     " It should be 'tide, 'typescript-formatter, 'prettier or 'tslint."
                      (symbol-name typescript-fmt-tool))))))
 
 (defun spacemacs/typescript-fmt-before-save-hook ()
